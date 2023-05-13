@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <script src="../js/tailwindcss.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.3.5/axios.min.js" integrity="sha512-nnNHpffPSgINrsR8ZAIgFUIMexORL5tPwsfktOTxVYSv+AUAILuFYWES8IHl+hhIhpFGlKvWFiz9ZEusrPcSBQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="../js/fontawesome.js"></script>
+    <script src="../js/main.js" defer></script>
+ 
+
+</head>
+<body class="bg-gray-900 text-gray-200">
+    <header class="flex justify-between items-center bg-gray-900 py-4 px-6 border-b border-blue-500 space-x-5">
+        <h1 class="text-2xl font-bold text-gradient-to-r from-red-500 to-pink-500 flex w-full justify-start items-center">
+            <span class="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-br from-pink-400 to-red-600">Fishify - Admin</span>
+        </h1>
+        <button
+         onclick="create_new_class()"
+         class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded w-[300px]">
+         Create New Class
+        </button>
+        <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+        onclick="window.location.href = '/logout'"
+        >Logout</button>
+      </header>
+      
+
+<div class="w-full rounded">
+    <!-- Tabs -->
+    <ul id="tabs" class="flex w-full px-1 pt-2 justify-evenly">
+        <li class="px-4 py-2 w-full font-semibold rounded-t opacity-50">
+            <a class="w-full flex justify-center items-center space-x-2" id="train-tab" href="#train">
+                <i class="fa-solid fa-gear"></i> <span>Train</span>
+            </a>
+        </li>
+        <li class="px-4 py-2 w-full font-semibold rounded-t opacity-50">
+            <a class="w-full flex justify-center items-center space-x-2" id="predict-tab" href="#predict">
+                <i class="fa-brands fa-think-peaks"></i> <span>Predict</span>
+            </a>
+        </li>
+        <li class="px-4 py-2 w-full font-semibold rounded-t opacity-50">
+            <a class="w-full flex justify-center items-center space-x-2" id="upload-tab" href="#upload">
+                <i class="fa-solid fa-image"></i> <span>Upload</span>
+            </a>
+        </li>
+        <li class="px-4 py-2 w-full font-semibold rounded-t opacity-50">
+            <a class="w-full flex justify-center items-center space-x-2" id="modify-tab" href="#modify">
+              <i class="fa-solid fa-pen"></i> <span>Modify Model</span>
+            </a>
+        </li>
+    </ul>
+
+    <!-- Tab Contents -->
+    <div id="tab-contents">
+        <div id="train" class="p-4 flex justify-center items-center flex-col w-full space-y-4 h-[600px]">
+            <div id="train-progress" class="text-center text-lg font-semibold mt-5 w-[500px]">
+                This process may take some time to complete, depending on the size of the data and the complexity of the model. During this time, it is important not to close the page or interrupt the training process as it may lead to inaccurate or incomplete results. It is recommended to wait until the training is completed and the results are displayed on the page.
+            </div>
+            <button 
+            id="train-button"
+            onclick="start_train()"
+            class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded w-[30%]"
+            >Start Train</button>
+        </div>
+
+        <div id="predict"  class="p-4 flex justify-center items-center flex-col w-full space-y-4 h-[600px]">
+            <div class="bg-gray-800 w-auto m-5 p-5 rounded-md shadow-md text-gray-300">
+                <div class="text-center text-2xl font-bold mb-5">
+                  Upload Image 🐟 
+              </div>
+                <form id="image-form" action="" method="POST">
+                  <div class="mb-3 w-96">
+             
+                    <input
+                      class="relative m-0 block w-full min-w-0 flex-auto cursor-pointer rounded border border-solid border-neutral-300 bg-clip-padding px-3 py-[0.32rem] font-normal leading-[2.15] text-neutral-700 transition duration-300 ease-in-out file:-mx-3 file:-my-[0.32rem] file:cursor-pointer file:overflow-hidden file:rounded-none file:border-0 file:border-solid file:border-inherit file:bg-neutral-100 file:px-3 file:py-[0.32rem] file:text-neutral-700 file:transition file:duration-150 file:ease-in-out file:[border-inline-end-width:1px] file:[margin-inline-end:0.75rem] hover:file:bg-gray-600 focus:border-primary focus:text-neutral-700 focus:shadow-te-primary focus:outline-none dark:border-neutral-600 dark:text-neutral-200 dark:file:bg-neutral-700 dark:file:text-neutral-100 dark:focus:border-primary"
+                      id="image-input"
+                      accept="image/*"
+                      type="file" />
+                  </div>
+                  <div class="text-center mt-5">
+                    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full">
+                      <i class="fa-solid fa-upload"></i> Predict
+                    </button>
+                  </div>
+                </form>
+              </div>
+        </div>
+
+        <div id="upload" class="p-4 flex justify-center items-center flex-col w-full space-y-4 h-[600px]">
+
+
+
+            <div class="bg-gray-800 p-6 rounded-lg">
+                <h1 class="text-white text-2xl font-bold mb-4 text-center mb-4">Upload Fish Image 🐟</h1>
+                <form class="flex flex-col gap-4" id="upload_image_form">
+                  <div>
+                    <label for="image" class="block text-white text-lg font-medium mb-2">Fish Image:</label>
+                    <input
+                    class="relative m-0 block w-full min-w-0 flex-auto cursor-pointer rounded border border-solid border-neutral-300 bg-clip-padding px-3 py-[0.32rem] font-normal leading-[2.15] text-neutral-700 transition duration-300 ease-in-out file:-mx-3 file:-my-[0.32rem] file:cursor-pointer file:overflow-hidden file:rounded-none file:border-0 file:border-solid file:border-inherit file:bg-neutral-100 file:px-3 file:py-[0.32rem] file:text-neutral-700 file:transition file:duration-150 file:ease-in-out file:[border-inline-end-width:1px] file:[margin-inline-end:0.75rem] hover:file:bg-gray-600 focus:border-primary focus:text-neutral-700 focus:shadow-te-primary focus:outline-none dark:border-neutral-600 dark:text-neutral-200 dark:file:bg-neutral-700 dark:file:text-neutral-100 dark:focus:border-primary"
+                    id="image"
+                    accept="image/*"
+                    required
+                    type="file" />
+                  </div>
+                  <div>
+                    <label for="class" class="block text-white text-lg font-medium mb-2">Fish Class:</label>
+                    <select id="class" name="class" class="py-2 px-3 rounded-lg bg-gray-700 text-white w-full">
+                      {% for class in classes %}
+                      <option value={{class}} default>{{class}}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                  <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mt-3"
+                  >Upload</button>
+                </form>
+              </div>
+              
+        </div>
+
+        <div id="modify" class="container mx-auto py-8 p-6">
+          <div class=" w-full flex justify-center items-center flex-col">
+            <span class="text-green-500 text-xl font-bold mb-2">
+              {{ status }}
+            </span>
+
+            <h1 class="text-2xl font-bold mb-4 text-gray-600"><i class="fa-sharp fa-regular fa-pen-to-square"></i> train.py</h1>
+          </div>
+            <form method="post" action="/write_train_py">
+              <div class="pl-[300px] pr-[300px]">
+                <pre><textarea name="data" id="train_py" 
+                  class="w-full h-64 p-4 rounded-lg border border-gray-400 mb-4 bg-black/20
+                   text-green-500 resize-none h-[450px] overflow-auto">{{ data }}</textarea>
+                </pre>
+              </div>
+              <div class=" w-full flex justify-center">
+                <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">Save Changes</button>
+              </div>
+            </form>
+          </div>
+          
+    </div>
+</div>
+
+<script>
+    // Get the tab elements
+    const tabs = document.querySelectorAll('#tabs li');
+    // Get the tab content elements
+    const tabContents = document.querySelectorAll('#tab-contents > div');
+    // Loop through each tab and add a click event listener
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            // Remove the "active" class from all tabs
+            tabs.forEach(tab => {
+                tab.classList.remove('border-blue-400', 'border-b-4', '-mb-px', 'opacity-100');
+            });
+            // Add the "active" class to the clicked tab
+            tab.classList.add('border-blue-400', 'border-b-4', '-mb-px', 'opacity-100');
+            // Hide all tab content
+            tabContents.forEach(content => {
+                content.classList.add('hidden');
+            });
+            // Show the tab content for the clicked tab
+            const tabContentId = tab.querySelector('a').getAttribute('href').substring(1);
+            document.getElementById(tabContentId).classList.remove('hidden');
+        });
+    });
+
+    // Click the first tab by default
+    tabs[0].click();
+
+    window.onload = function(){
+      setTimeout(async() => {
+          const data = await axios.get('/get_train_py')
+          document.querySelector('#train_py').value = data.data
+      },200)
+    }
+
+
+async function start_train(){
+const train_display = document.querySelector('#train-progress')
+const train_button = document.querySelector('#train-button')
+train_display.insertAdjacentHTML("beforebegin",`
+<svg id="loading_svg" xmlns="http://www.w3.org/2000/svg"
+xmlns:xlink="http://www.w3.org/1999/xlink"
+ style="margin:auto;background:#fff;display:block;background: #00000000;" width="200px" height="200px" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
+   <g transform="translate(50 50)">  <g transform="translate(-19 -19) scale(0.6)"> <g>
+  <animateTransform attributeName="transform" type="rotate" values="0;45" keyTimes="0;1" dur="0.2s" begin="0s" repeatCount="indefinite"></animateTransform><path d="M31.35997276079435 21.46047782418268 L38.431040572659825 28.531545636048154 L28.531545636048154 38.431040572659825 L21.46047782418268 31.359972760794346 A38 38 0 0 1 7.0000000000000036 37.3496987939662 L7.0000000000000036 37.3496987939662 L7.000000000000004 47.3496987939662 L-6.999999999999999 47.3496987939662 L-7 37.3496987939662 A38 38 0 0 1 -21.46047782418268 31.35997276079435 L-21.46047782418268 31.35997276079435 L-28.531545636048154 38.431040572659825 L-38.43104057265982 28.531545636048158 L-31.359972760794346 21.460477824182682 A38 38 0 0 1 -37.3496987939662 7.000000000000007 L-37.3496987939662 7.000000000000007 L-47.3496987939662 7.000000000000008 L-47.3496987939662 -6.9999999999999964 L-37.3496987939662 -6.999999999999997 A38 38 0 0 1 -31.35997276079435 -21.460477824182675 L-31.35997276079435 -21.460477824182675 L-38.431040572659825 -28.531545636048147 L-28.53154563604818 -38.4310405726598 L-21.4604778241827 -31.35997276079433 A38 38 0 0 1 -6.999999999999992 -37.3496987939662 L-6.999999999999992 -37.3496987939662 L-6.999999999999994 -47.3496987939662 L6.999999999999977 -47.3496987939662 L6.999999999999979 -37.3496987939662 A38 38 0 0 1 21.460477824182686 -31.359972760794342 L21.460477824182686 -31.359972760794342 L28.531545636048158 -38.43104057265982 L38.4310405726598 -28.53154563604818 L31.35997276079433 -21.4604778241827 A38 38 0 0 1 37.3496987939662 -6.999999999999995 L37.3496987939662 -6.999999999999995 L47.3496987939662 -6.999999999999997 L47.349698793966205 6.999999999999973 L37.349698793966205 6.999999999999976 A38 38 0 0 1 31.359972760794346 21.460477824182682 M0 -23A23 23 0 1 0 0 23 A23 23 0 1 0 0 -23" fill="#85a2b6"></path></g></g> <g transform="translate(19 19) scale(0.6)"> <g>
+  <animateTransform attributeName="transform" type="rotate" values="45;0" keyTimes="0;1" dur="0.2s" begin="-0.1s" repeatCount="indefinite"></animateTransform><path d="M-31.35997276079435 -21.460477824182675 L-38.431040572659825 -28.531545636048147 L-28.53154563604818 -38.4310405726598 L-21.4604778241827 -31.35997276079433 A38 38 0 0 1 -6.999999999999992 -37.3496987939662 L-6.999999999999992 -37.3496987939662 L-6.999999999999994 -47.3496987939662 L6.999999999999977 -47.3496987939662 L6.999999999999979 -37.3496987939662 A38 38 0 0 1 21.460477824182686 -31.359972760794342 L21.460477824182686 -31.359972760794342 L28.531545636048158 -38.43104057265982 L38.4310405726598 -28.53154563604818 L31.35997276079433 -21.4604778241827 A38 38 0 0 1 37.3496987939662 -6.999999999999995 L37.3496987939662 -6.999999999999995 L47.3496987939662 -6.999999999999997 L47.349698793966205 6.999999999999973 L37.349698793966205 6.999999999999976 A38 38 0 0 1 31.359972760794346 21.460477824182682 L31.359972760794346 21.460477824182682 L38.431040572659825 28.531545636048154 L28.531545636048183 38.4310405726598 L21.460477824182703 31.35997276079433 A38 38 0 0 1 6.9999999999999964 37.3496987939662 L6.9999999999999964 37.3496987939662 L6.999999999999995 47.3496987939662 L-7.000000000000009 47.3496987939662 L-7.000000000000007 37.3496987939662 A38 38 0 0 1 -21.46047782418263 31.359972760794385 L-21.46047782418263 31.359972760794385 L-28.531545636048094 38.43104057265987 L-38.431040572659796 28.531545636048186 L-31.359972760794328 21.460477824182703 A38 38 0 0 1 -37.34969879396619 7.000000000000032 L-37.34969879396619 7.000000000000032 L-47.34969879396619 7.0000000000000355 L-47.3496987939662 -7.000000000000002 L-37.3496987939662 -7.000000000000005 A38 38 0 0 1 -31.359972760794346 -21.460477824182682 M0 -23A23 23 0 1 0 0 23 A23 23 0 1 0 0 -23" fill="#bbcedd"></path></g></g></g>
+  </svg>
+`)
+train_button.setAttribute("disabled","")
+train_button.classList.toggle('cursor-not-allowed')
+
+await axios('/train')
+
+document.querySelector('#loading_svg').remove()
+train_button.classList.toggle('cursor-not-allowed')
+train_button.removeAttribute("disabled")
+
+train_display.insertAdjacentHTML("beforebegin",`
+    <span class="w-full p-3 text-green-500  text-4xl font-semibold text-center text-lg">
+    <i class="fa-solid fa-circle-check"></i> Training Complete!
+     </span>
+`)
+}
+
+function create_new_class(){
+  document.body.insertAdjacentHTML('beforeend',`
+<div id="new_class_container" class="p-4 flex justify-center items-center flex-col w-full w-screen h-screen absolute top-0 left-0 z-[1000] bg-black/50">
+<div class="bg-gray-800 p-6 rounded-lg relative">
+    <button 
+    class="absolute top-0 right-0 hover:text-red-500 text-xl"
+    onclick="document.querySelector('#new_class_container').remove()">
+    <i class="fa-solid fa-circle-xmark"></i>
+      </button>
+    <h1 class="text-white text-2xl font-bold mb-4 text-center mb-4">Add New Class 🐟</h1>
+    <form method="POST" action="/new_class" class="flex flex-col gap-4">
+      <div>
+        <label  class="block text-white text-lg font-medium mb-2">Add Class:</label>
+        <input
+        class="py-2 px-3 rounded-lg bg-gray-700 text-white w-full w-[300px]"
+        required
+        name="class_name"
+        type="text" />
+      </div>
+      <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mt-3"
+      >Add</button>
+    </form>
+  </div>
+  
+</div>
+  `)
+}
+
+
+// Add an event listener to the form for when it's submitted
+document.querySelector('#upload_image_form').addEventListener('submit', async (event) => {
+event.preventDefault();
+
+// Get the input element for the image and the select element for the class
+const imageInput = document.querySelector('#image');
+const classSelect = document.querySelector('#class');
+
+// Get the file object for the selected image
+const file = imageInput.files[0];
+
+// Create a new FormData object to store the image and class values
+const formData = new FormData();
+formData.append('image', file);
+formData.append('class', classSelect.value);
+
+try {
+// Send a POST request to the /upload_image endpoint with the form data
+const response = await axios.post('/upload_image', formData, {
+  headers: {
+    'Content-Type': 'multipart/form-data'
+  }
+});
+
+// Handle the response from the server
+document.querySelector('#upload').insertAdjacentHTML("afterbegin",`           
+ <span class="w-full p-3 text-green-500 font-semibold text-center text-lg">
+<i class="fa-solid fa-circle-check"></i>  Uploaded Successfully! 
+ </span>
+`)
+} catch (error) {
+document.querySelector('#upload').insertAdjacentHTML("afterbegin",`           
+ <span class="w-full p-3 text-red-500 font-semibold text-center text-lg">
+ <i class="fa-solid fa-circle-xmark"></i>  Upload Unsuccessfull! 
+ </span>
+`)
+}
+});
+</script>
+</body>
+</html>
